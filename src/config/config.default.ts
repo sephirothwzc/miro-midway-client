@@ -31,7 +31,7 @@ export = (appInfo: any) => {
       {
         name: 'proto',
         protoPath: 'lib/proto',
-        host: '10.144.6.235',
+        host: '172.20.10.4',
         port: 50051
       }
     ]

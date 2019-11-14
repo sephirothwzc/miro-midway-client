@@ -392,3 +392,105 @@ dig @127.0.0.1 -p 8600 localhost.localdomain.node.consul
 ### 注册服务
 
 1. 服务定义
+
+```
+sudo mkdir /etc/consul.d
+echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}}'  | sudo tee /etc/consul.d/web.json
+consul agent -dev -config-dir=/etc/consul.d
+```
+
+2. 查询一个服务
+
+```
+# 使用 DNS API
+[root@local13 ~]# dig @127.0.0.1 -p 8600 web.service.consul
+...
+;; QUESTION SECTION:
+;web.service.consul.        IN  A
+;; ANSWER SECTION:
+web.service.consul. 0   IN  A   127.0.0.1
+
+# 使用 DNS API 查找 SRV 记录
+[root@local13 ~]# dig @127.0.0.1 -p 8600 web.service.consul SRV
+...
+;; QUESTION SECTION:
+;web.service.consul.        IN  SRV
+;; ANSWER SECTION:
+web.service.consul. 0   IN  SRV 1 1 80 local13.node.dc1.consul.
+;; ADDITIONAL SECTION:
+local13.node.dc1.consul. 0  IN  A   127.0.0.1
+...
+
+# 使用 HTTP API 查询
+[root@local13 ~]# curl http://localhost:8500/v1/catalog/service/web
+# 健康检查
+[root@local13 ~]# curl 'http://localhost:8500/v1/health/service/web?passing'
+```
+
+### Consul 集群
+
+1. 创建 node1，consul server
+
+```
+$ consul agent -server -bootstrap-expect=1  \
+-data-dir=/tmp/consul \
+-node=agent-one -bind=192.168.10.47 \
+-enable-script-checks=true -config-dir=/etc/consul.d \
+-client 0.0.0.0 -ui
+# -node：节点的名称
+# -bind：绑定的一个地址，用于节点之间通信的地址，可以是内外网，必须是可以访问到的地址
+# -server：这个就是表示这个节点是个SERVER
+# -bootstrap-expect：这个就是表示期望提供的SERVER节点数目，数目一达到，它就会被激活，然后就是LEADER了
+# -dc：指明数据中心的名字
+# -client 0.0.0.0 -ui：启动UI（为了方便后续的UI访问）
+```
+
+2. 创建 node2,consul client
+
+```
+$ consul agent -data-dir=/tmp/consul \
+-node=agent-two   \
+-bind=192.168.10.47 -enable-script-checks=true \
+-config-dir=/etc/consul.d \
+-ui
+```
+
+3. 加入集群
+
+node1 ip 加入集群
+
+```
+consul join 192.168.10.47
+consul members
+```
+
+4. 查询节点
+
+```
+dig @127.0.0.1 -p 8600 agent-two.node.consul
+```
+
+### KV 数据
+
+类似 Redis，一般也就用来做服务配置。
+简单了解下命令就好：
+
+```
+consul kv put redis/config/minconns 1
+consul kv put redis/config/minconns 2 # 更新
+consul kv get redis/config/minconns
+consul kv delete redis/config/minconns
+consul kv delete -recurse redis # 批量删除
+```
+
+### WEB UI
+
+访问下：
+http://192.168.10.47:8500/ui
+
+栏目解析：就是上面操作生成的一些东西
+
+1. services：放置服务
+2. nodes：放置 consul 节点
+3. key/value：放置一些配置信息
+4. dc1：配置数据中心

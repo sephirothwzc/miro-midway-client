@@ -24,5 +24,9 @@ export = {
   grpcClient: {
     enable: true,
     package: 'grpc-client-egg'
+  },
+  consulPlus: {
+    enable: true,
+    package: 'egg-consul-plus'
   }
 };
