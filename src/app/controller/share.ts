@@ -2,20 +2,24 @@
  * @Author: 吴占超
  * @Date: 2019-10-28 14:10:56
  * @Last Modified by: 吴占超
- * @Last Modified time: 2019-10-29 11:48:59
+ * @Last Modified time: 2019-11-15 12:34:48
  */
-import { provide, Context, plugin } from 'midway';
+import { provide, Context, plugin, inject } from 'midway';
 import { BaseController } from '../../base/base.controller';
 import {
   SwaggerJoiController as sjc,
   SwaggerJoiGet
 } from 'midway-joi-swagger2';
+import { IGrpcClient } from '../../lib/iocs/grpc-client';
 
 @provide()
 @sjc({ path: '/api/share', api: 'share' })
 export class ShareController extends BaseController {
   @plugin()
   private grpcClient: any;
+
+  @inject('grpcClient')
+  grpcClient2: IGrpcClient;
 
   // @plugin()
   // private grpc: any;
@@ -61,5 +65,27 @@ export class ShareController extends BaseController {
     // 打印服务端响应内容
     console.log(result);
     ctx.body = result;
+  }
+
+  @SwaggerJoiGet({
+    path: '/test-consul',
+    api: 'share',
+    description: '测试获取consul',
+    summary: 'testConsul'
+    //  query: schemas.StestConsulIn,
+    //  responses: schemas.StestConsulOut
+  })
+  async testConsul(ctx: Context) {
+    const address = ctx.app['services'].consulPlusTest.replace('http://', '');
+    const dd = this.grpcClient2.consul('demo', 'Hello', 'hello', address);
+    // console.log(dd);
+    // const client = new ctx.app['grpcProto'].demo.Hello();
+    // console.log(client);
+    // const result = yield client.echo({ code: 200 });
+    ctx.body = await dd.sayHello({
+      code: '201',
+      message: '来自Node客户端的OK'
+    });
+    // ctx.body = 'hi consul';
   }
 }

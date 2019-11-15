@@ -17,25 +17,40 @@ export = (appInfo: any) => {
     }
   };
 
-  // config.grpc = {
-  //   listen: {
-  //     endpoint: 'localhost:50051',
-  //     dir: 'app/proto', // proto files dir, relative path
-  //     property: 'grpc' // default attach to `ctx.grpc.**`
-  //     // loadOpts: { convertFieldsToCamelCase: true, }, // message field case: `string user_name` -> `userName`
+  config.grpc = {
+    listen: {
+      endpoint: 'localhost:50051',
+      dir: 'lib/proto', // proto files dir, relative path
+      property: 'grpc' // default attach to `ctx.grpc.**`
+      // loadOpts: { convertFieldsToCamelCase: true, }, // message field case: `string user_name` -> `userName`
+    }
+  };
+
+  // grpc-lcient-egg 配置弃用
+  // config.grpcClient = {
+  //   clients: [
+  //     {
+  //       name: 'proto',
+  //       protoPath: 'lib/proto',
+  //       host: '172.20.10.4',
+  //       port: 50051
+  //     }
+  //   ]
+  // };
+  // config.grpcClient = {
+  //   clients: {
+  //     shop: {
+  //       packageName: 'demo',
+  //       serviceName: 'Hello',
+  //       // protoPath: path.resolve(__dirname, '../service_def/shop.proto'),
+  //       protoPath: 'lib/proto/hello.proto',
+  //       sdUri: 'static://127.0.0.1:50011',
+  //       grpcProtoLoaderOpts: {
+  //         // see:  https://github.com/grpc/grpc-node/tree/master/packages/proto-loader for details
+  //       }
+  //     }
   //   }
   // };
-
-  config.grpcClient = {
-    clients: [
-      {
-        name: 'proto',
-        protoPath: 'lib/proto',
-        host: '172.20.10.4',
-        port: 50051
-      }
-    ]
-  };
 
   config.security = {
     csrf: {

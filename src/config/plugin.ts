@@ -21,10 +21,15 @@ export = {
   //   enable: true,
   //   package: 'egg-router-plus'
   // },
-  grpcClient: {
-    enable: true,
-    package: 'grpc-client-egg'
-  },
+  // 放弃此方案换用动态方案
+  // grpcClient: {
+  //   enable: true,
+  //   package: 'grpc-client-egg'
+  // },
+  // grpcClient: {
+  //   enable: true,
+  //   package: 'egg-grpc-client-plugin'
+  // },
   consulPlus: {
     enable: true,
     package: 'egg-consul-plus'
