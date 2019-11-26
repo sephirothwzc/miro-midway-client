@@ -27,24 +27,25 @@ export = (appInfo: any) => {
   };
 
   // grpc-lcient-egg 配置弃用
-  // config.grpcClient = {
-  //   clients: [
-  //     {
-  //       name: 'proto',
-  //       protoPath: 'lib/proto',
-  //       host: '172.20.10.4',
-  //       port: 50051
-  //     }
-  //   ]
-  // };
+  config.grpcClient = {
+    clients: [
+      {
+        name: 'proto',
+        protoPath: 'lib/proto/wxapi',
+        host: '127.0.0.2',
+        port: 50051
+      }
+    ]
+  };
   // config.grpcClient = {
   //   clients: {
   //     shop: {
   //       packageName: 'demo',
   //       serviceName: 'Hello',
   //       // protoPath: path.resolve(__dirname, '../service_def/shop.proto'),
-  //       protoPath: 'lib/proto/hello.proto',
-  //       sdUri: 'static://127.0.0.1:50011',
+  //       protoPath: path.resolve(__dirname, '../lib/proto/hello.proto'),
+  //       // protoPath: 'lib/proto/hello.proto',
+  //       sdUri: 'static://127.0.0.1:50051',
   //       grpcProtoLoaderOpts: {
   //         // see:  https://github.com/grpc/grpc-node/tree/master/packages/proto-loader for details
   //       }

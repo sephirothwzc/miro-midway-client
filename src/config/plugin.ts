@@ -22,10 +22,10 @@ export = {
   //   package: 'egg-router-plus'
   // },
   // 放弃此方案换用动态方案
-  // grpcClient: {
-  //   enable: true,
-  //   package: 'grpc-client-egg'
-  // },
+  grpcClient: {
+    enable: false,
+    package: 'grpc-client-egg'
+  },
   // grpcClient: {
   //   enable: true,
   //   package: 'egg-grpc-client-plugin'

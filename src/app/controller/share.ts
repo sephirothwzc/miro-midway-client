@@ -2,7 +2,7 @@
  * @Author: 吴占超
  * @Date: 2019-10-28 14:10:56
  * @Last Modified by: 吴占超
- * @Last Modified time: 2019-11-15 12:34:48
+ * @Last Modified time: 2019-11-26 11:56:09
  */
 import { provide, Context, plugin, inject } from 'midway';
 import { BaseController } from '../../base/base.controller';
@@ -47,20 +47,30 @@ export class ShareController extends BaseController {
     //  responses: schemas.SHelloOut
   })
   async hello(ctx: Context) {
-    const result = await this.grpcClient.proto.demo.Hello.SayHello({
-      code: '0',
-      message: '来自Node客户端的OK'
-    });
     console.log(this.grpcClient);
-    // console.log(this.grpc);
-    // 获得HelloService实例
-    // const helloService = ctx.grpc.demo.Hello;
-
-    // // 向服务端发送请求
-    // const result = await helloService.SayHello({
+    // #region egg-grpc-client-plus
+    // const result = await this.grpcClient.proto.demo.Hello.SayHello({
     //   code: '0',
     //   message: '来自Node客户端的OK'
     // });
+    // const result = await this.grpcClient.clients['shop'].sayHello({
+    //   code: '0',
+    //   message: '来自Node客户端的OK'
+    // });
+    // console.log(this.grpcClient);
+    // console.log(this.grpc);
+    // #endregion egg-grpc-client-plus
+
+    // #region grpc-client-egg
+    // 获得HelloService实例
+    const helloService = this.grpcClient.proto.demo.Hello;
+
+    // 向服务端发送请求
+    const result = await helloService.SayHello({
+      code: '0',
+      message: '来自Node客户端的OK'
+    });
+    // #endregion
 
     // 打印服务端响应内容
     console.log(result);
@@ -76,6 +86,7 @@ export class ShareController extends BaseController {
     //  responses: schemas.StestConsulOut
   })
   async testConsul(ctx: Context) {
+    console.log(ctx.app['services']);
     const address = ctx.app['services'].consulPlusTest.replace('http://', '');
     const dd = this.grpcClient2.consul('demo', 'Hello', 'hello', address);
     // console.log(dd);
